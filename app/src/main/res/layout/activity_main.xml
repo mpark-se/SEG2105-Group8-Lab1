@@ -48,7 +48,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="8dp"
                     android:gravity="bottom"
-                    android:text="0000"
+                    android:hint="Enter value"
                     android:textAlignment="textEnd"
                     android:textSize="48sp" />
 
