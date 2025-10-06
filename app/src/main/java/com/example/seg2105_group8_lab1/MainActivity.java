@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import java.math.BigDecimal;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -163,6 +165,13 @@ public class MainActivity extends AppCompatActivity{
             }
         }
         );
+        btnDec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                insertDecimal();
+            }
+        }
+        );
         btnEql.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -195,6 +204,11 @@ public class MainActivity extends AppCompatActivity{
         }
         return true;
     }
+    private String formatResult(double value) {
+        BigDecimal bd = BigDecimal.valueOf(value).stripTrailingZeros();
+        return bd.toPlainString(); // "12" instead of "12.0"
+    }
+
     private void doOperation(double value1, double value2){
         if(optr == Operator.add){
             result = value1 + value2;
@@ -208,7 +222,8 @@ public class MainActivity extends AppCompatActivity{
         if(optr == Operator.divide){
             result = value1/value2;
         }
-        display.setText(String.valueOf(result));
+        display.setText(formatResult(result));
+
     }
     private void inputNumber(String num){
         display.setText(display.getText() + num);
@@ -223,7 +238,30 @@ public class MainActivity extends AppCompatActivity{
         val2 = 0;
         result = 0;
     }
+    private void insertDecimal() {
+        String text = display.getText().toString();
+        String current = getCurrentToken(text);
 
+        if (current.isEmpty()) {
+            // Starting a new number with a decimal -> "0."
+            display.setText(text + "0.");
+        } else if (!current.contains(".")) {
+            // Add a decimal only if the current token doesn't already have one
+            display.setText(text + ".");
+        }
     }
+
+    private String getCurrentToken(String s) {
+        int lastPlus = s.lastIndexOf('+');
+        int lastMinus = s.lastIndexOf('-');
+        int lastMul = s.lastIndexOf('*');
+        int lastDiv = s.lastIndexOf('/');
+
+        int idx = Math.max(Math.max(lastPlus, lastMinus), Math.max(lastMul, lastDiv));
+        return idx == -1 ? s : s.substring(idx + 1);
+    }
+
+
+}
 
 
